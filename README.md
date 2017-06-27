@@ -1,9 +1,15 @@
-## Hyper Cook
-# Currently supported action:
+# Hyper Cook
+a faster way for you to organize your refrigerator as well as delectable cuisine(I guess)
+
+## Currently supported action:
 1. Add Ingredient with the expired date
-2. get recipe on the right side
-3. future function:
+2. Get recipe with your chosen food on the right side
+3. Delete Ingredient
+4. Future Function:
 
-* Login in and server
-* Chatbot
+* Login in and user refrigerator server
+* Chatbot->LUIS to do command
 
+## License
+
+hyper-cook is released under the MIT license.
