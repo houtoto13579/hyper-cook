@@ -26,29 +26,28 @@ class Fridge extends Component {
     let day = fridgeBlock.day;
     var colorPick;
     switch(day){
-      case 5:
-        colorPick='#d7ffce';
-        break;
-      case 4:
-        colorPick='#ebffce';
-        break;
-      case 3:
-        colorPick='#fff9ce';
-        break;
-      case 2:
-        colorPick='#ffe1ce';
+
+      case 0:
+        colorPick='#ff4b3f';
         break;
       case 1:
-        colorPick='#f1d3c8';
+        colorPick='#ff753f';
         break;
-      case 0:
-        colorPick='#ffc3b8';
+      case 2:
+        colorPick='#ff983f';
         break;
+      case 3:
+        colorPick='#ffab3f';
+        break;
+      case 4:
+        colorPick='#7fb532';
+        break;
+      case 5:
       default:
-        colorPick='#d7ffce';
+        colorPick='#2db54a';
         break;
     }
-    var bPick =  (fridgeBlock.chosen)?"2px solid": "0px solid";
+    var bPick =  (fridgeBlock.chosen)?"4px solid #3d3d3d": "0px solid";
     var colorStyle={
       backgroundColor: colorPick,
       border:bPick
