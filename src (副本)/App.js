@@ -217,7 +217,7 @@ class App extends Component {
     } 
     this.setState({
       newName:value,
-      alert:(<SweetAlert
+    alert:(<SweetAlert
           showCancel
           custom
           title="Expired date"
@@ -261,37 +261,39 @@ class App extends Component {
   }
 
   getFridge(){
-    fetch(`/api/foodStorage`, {		
-      credentials: 'same-origin'		
-    })		
-    .then(res => res.json())		
-    .then(d => {		
-      let chosen=false;		
-      const storage = d.ingredients;				
-      const foodArray = storage.map(ig =>{	
-        return({		
-          id: ig.id,		
-          name: ig.name,		
-          day: ig.day,		
-          chosen,		
-        });		
-      });
-      return foodArray;		
-    })		
-    .then(data => this.setState({ fridge: data }))		
-    .catch(err => console.log(err));
+    fetch(`${this.apiUrl}fridge`, {
+      method: 'post',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "action": "get",
+        "userId": this.state.userId,
+      }),
+    }).then(this.checkStatus)
+    .then(response=>response.json())
+    .then(resObj=>{
+      let fridge=resObj.fridge;
+      this.setState({
+        fridge,
+      })
+    })
+    .catch(error=>{
+      console.log('get fridge fail...')
+      console.log(error);  
+    });
   }
 
   addFridge(name,day){
-    let id =generateUUID();
     let fridge=this.state.fridge;
     let newFood={
-      id,
+      id: this.state.count,
       name,
       day,
       chosen: false,
     }
-    //console.log(newFood);
+    console.log(newFood);
     fridge.push(newFood);
     this.setState(
       {
@@ -299,22 +301,28 @@ class App extends Component {
         count:this.state.count+1,
       }
     )
-    fetch(`/api/foodStorage`, {		
-      credentials: 'same-origin',		
-      method: 'put',		
-      headers: {		
-        'Accept': 'application/json',		
-        'Content-Type': 'application/json',		
-      },		
-      body: JSON.stringify({		
-        delete:this.state.deletemode,		
-        id,		
-        name,		
-        day,		
-      }),		
+    fetch(`${this.apiUrl}fridge`, {
+      method: 'post',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "action": "add",
+        "userId": this.state.userId,
+        "ingredient": newFood
+      }),
+    }).then(this.checkStatus)
+    .then(response=>response.json())
+    .then(resObj=>{
+      if(resObj.action==='success'){
+        this.getFridge();
+      }
     })
-    .then(()=>this.getFridge())		
-    .catch(err => console.log(err))
+    .catch(error=>{
+      console.log('get fridge fail...')
+      console.log(error);  
+    });
   }
   deleteFridge(id){
     let fridge = this.state.fridge;
@@ -326,20 +334,29 @@ class App extends Component {
     }
     fridge.splice(target,1);
     this.setState({fridge,queue,},()=>{this.fetchRecipeByQueue()})
-    fetch(`/api/foodStorage`, {		
-        credentials: 'same-origin',		
-        method: 'put',		
-        headers: {		
-          'Accept': 'application/json',		
-          'Content-Type': 'application/json',		
-        },		
-        body: JSON.stringify({		
-          delete: this.state.deletemode,		
-          id,		
-        }),		
-      })		
-      .then(() => this.getFridge())		
-      .catch(err => console.log(err));
+    fetch(`${this.apiUrl}fridge`, {
+      method: 'post',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "action": "delete",
+        "userId": this.state.userId,
+        "id": fridge[target].id,
+        "name": fridge[target].name,
+      }),
+    }).then(this.checkStatus)
+    .then(response=>response.json())
+    .then(resObj=>{
+      if(resObj.action==='success'){
+        this.getFridge();
+      }
+    })
+    .catch(error=>{
+      console.log('get fridge fail...')
+      console.log(error);  
+    });
   }
   deleteFridgeByName(name){
     let fridge = this.state.fridge;
@@ -362,6 +379,7 @@ class App extends Component {
   sendChatInput(){
     let chatInput = this.state.chatInput;
     if(chatInput.trim() === "" || chatInput === null){
+
     }
     else{
       let chatLog=this.state.chatLog;
